@@ -3,23 +3,62 @@
   "version": "0.1.0",
   "description": "Strict versioned connector manifests, envelopes and signature payloads for TypeScript.",
   "type": "module",
-  "private": true,
   "sideEffects": false,
-  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
-  "files": ["dist", "README.md", "LICENSE", "NOTICE"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "NOTICE",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "docs"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "check": "tsc -p tsconfig.json",
     "test": "bun test",
-    "verify": "bun run check && bun test && bun run build"
+    "verify": "bun run check && bun test && bun run build && bun run package:check",
+    "prepack": "bun run build",
+    "package:check": "node scripts/verify-package-contract.mjs"
   },
-  "keywords": ["typescript", "connectors", "integration", "contracts", "event-envelope", "security"],
-  "author": { "name": "Artem Prianishnikov", "email": "Pryanishnikovartem@gmail.com", "url": "https://frankfmy.com" },
+  "keywords": [
+    "typescript",
+    "connectors",
+    "integration",
+    "contracts",
+    "event-envelope",
+    "security"
+  ],
+  "author": {
+    "name": "Artem Prianishnikov",
+    "email": "Pryanishnikovartem@gmail.com",
+    "url": "https://frankfmy.com"
+  },
   "license": "Apache-2.0",
   "homepage": "https://frankfmy.com",
-  "repository": { "type": "git", "url": "git+https://github.com/FrankFMY/connector-contracts.git" },
-  "bugs": { "url": "https://github.com/FrankFMY/connector-contracts/issues" },
-  "engines": { "node": ">=20" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FrankFMY/connector-contracts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FrankFMY/connector-contracts/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "packageManager": "bun@1.4.0",
-  "devDependencies": { "@types/bun": "1.4.0", "@types/node": "^24.0.0", "typescript": "^6.0.0" }
+  "devDependencies": {
+    "@types/bun": "1.4.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^6.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

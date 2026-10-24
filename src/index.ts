@@ -142,11 +142,12 @@ const isBoundedJson = (value: unknown, depth: number, limits: ConnectorPayloadLi
   if (typeof value === "string") return value.length <= limits.maxStringLength && !hasControlCharacter(value);
 
   if (Array.isArray(value)) {
-    if (state.ancestors.has(value)) return false;
+    if (Object.hasOwn(value, "toJSON") || state.ancestors.has(value)) return false;
     state.ancestors.add(value);
     try {
       for (let index = 0; index < value.length; index += 1) {
-        if (!Object.hasOwn(value, index) || !isBoundedJson(value[index], depth + 1, limits, state)) return false;
+        const descriptor = Object.getOwnPropertyDescriptor(value, index);
+        if (!descriptor || descriptor.get || descriptor.set || !isBoundedJson(descriptor.value, depth + 1, limits, state)) return false;
       }
       return true;
     } finally {
@@ -154,7 +155,7 @@ const isBoundedJson = (value: unknown, depth: number, limits: ConnectorPayloadLi
     }
   }
 
-  if (!isPlainRecord(value) || state.ancestors.has(value)) return false;
+  if (!isPlainRecord(value) || Object.hasOwn(value, "toJSON") || state.ancestors.has(value)) return false;
   state.ancestors.add(value);
   try {
     for (const key of Object.keys(value)) {
@@ -190,12 +191,17 @@ export const isConnectorEnvelope = (
   if (!isPlainRecord(value) || Object.keys(value).length !== envelopeKeys.length || envelopeKeys.some((key) => !Object.hasOwn(value, key))) {
     return false;
   }
+  if (envelopeKeys.some((key) => {
+    const descriptor = Object.getOwnPropertyDescriptor(value, key);
+    return !descriptor || descriptor.get !== undefined || descriptor.set !== undefined;
+  })) return false;
   if (value.schemaVersion !== 1) return false;
   if (!isConnectorId(value.connectorId) || !isConnectorVersion(value.connectorVersion)) return false;
   if (!isConnectorOpaqueIdentity(value.eventId, 200) || !isConnectorOpaqueIdentity(value.upstreamIdentity, 300)) return false;
   if (!isConnectorEventType(value.eventType)) return false;
   if (typeof value.occurredAt !== "string" || value.occurredAt.length > 40 || !occurredAtPattern.test(value.occurredAt)) return false;
-  if (!Number.isFinite(Date.parse(value.occurredAt))) return false;
+  const occurredAtMillis = Date.parse(value.occurredAt);
+  if (!Number.isFinite(occurredAtMillis) || new Date(occurredAtMillis).toISOString().slice(0, 19) !== value.occurredAt.slice(0, 19)) return false;
   return isConnectorPayload(value.payload, limits);
 };
 

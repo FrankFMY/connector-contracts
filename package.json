@@ -1,6 +1,6 @@
 {
   "name": "@frankfmy/connector-contracts",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Strict versioned connector manifests, envelopes and signature payloads for TypeScript.",
   "type": "module",
   "sideEffects": false,
@@ -41,7 +41,7 @@
     "url": "https://frankfmy.com"
   },
   "license": "Apache-2.0",
-  "homepage": "https://frankfmy.com",
+  "homepage": "https://github.com/FrankFMY/connector-contracts#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FrankFMY/connector-contracts.git"

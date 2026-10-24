@@ -60,7 +60,7 @@ Default payload limits:
 | Nodes | 4,096 |
 | String length | 16,384 characters |
 
-A caller may provide a different complete `ConnectorPayloadLimits` policy.
+A caller may provide a different complete `ConnectorPayloadLimits` policy. Supply finite non-negative integer limits. Validators accept inert JSON-shaped data, not proxies or globally modified built-in prototypes. Accessor-backed envelope/array properties and own `toJSON` hooks (including hidden hooks) are rejected without invocation. The timestamp contract is four-digit-year UTC calendar dates with optional 1–3 fractional-second digits; leap seconds are not supported.
 
 ## Signature bytes
 
@@ -91,13 +91,13 @@ This package validates contracts; it does not provide transport authentication, 
 
 ## Package status
 
-The package is published on npm from immutable Git tags. Future releases use npm Trusted Publishing.
+The npm release is pending maintainer approval. [npm package](https://www.npmjs.com/package/@frankfmy/connector-contracts) · [source](https://github.com/FrankFMY/connector-contracts). ESM, Node.js 20+ or Bun 1.4+; no runtime dependencies.
 
 ```bash
 npm install @frankfmy/connector-contracts
 ```
 
-The first npm version is bootstrapped once from its clean exact tag with interactive account 2FA using `scripts/bootstrap-first-npm-release.sh`; subsequent releases use the repository's OIDC trusted publisher.
+Until npm approval, use the source checkout below, run `bun run build` and `npm pack`, and install the resulting tarball. Automatic release-triggered registry publication is not enabled.
 
 ## Development
 
@@ -114,7 +114,11 @@ bun run verify
 
 - GitHub: https://github.com/FrankFMY
 - Website: https://frankfmy.com
-- Email: Pryanishnikovartem@gmail.com
+- Email: Pryanishnikovartem@gmail.com · frankfmy@proton.me
+- Telegram: https://t.me/FrankFMY
+- LinkedIn: https://www.linkedin.com/in/frankfmy/
+- X: https://x.com/FrankFMY
+- npm: https://www.npmjs.com/~frankfmy
 
 ## License
 

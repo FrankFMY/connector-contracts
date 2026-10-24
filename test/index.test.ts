@@ -22,6 +22,22 @@ const validEnvelope = () => ({
 });
 
 describe("connector contracts", () => {
+  test("rejects accessor-backed envelope and array values without invoking getters", () => {
+    let reads = 0;
+    const envelope = Object.defineProperty(validEnvelope(), "eventId", { enumerable: true, get: () => { reads++; return "evt-1"; } });
+    expect(isConnectorEnvelope(envelope)).toBe(false);
+    const array = Object.defineProperty([1], 0, { get: () => { reads++; return 1; } });
+    expect(isConnectorEnvelope({ ...validEnvelope(), payload: { array } })).toBe(false);
+    expect(reads).toBe(0);
+  });
+
+  test("rejects hidden JSON serialization hooks without invoking getters", () => {
+    let reads = 0;
+    const payload = Object.defineProperty({ value: 1 }, "toJSON", { get: () => { reads++; return () => ({}); } });
+    expect(isConnectorEnvelope({ ...validEnvelope(), payload })).toBe(false);
+    expect(reads).toBe(0);
+  });
+
   test("freezes a versioned manifest with unique event identities", () => {
     const manifest = defineConnectorManifest({
       id: "telemetry-adapter",
@@ -39,6 +55,11 @@ describe("connector contracts", () => {
       ["outbound", "action.accepted"],
     ]);
     expect(() => defineConnectorManifest({ ...manifest, events: [manifest.events[0]!, manifest.events[0]!] })).toThrow("duplicated");
+  });
+
+  test("rejects calendar dates that Date.parse would normalize", () => {
+    expect(isConnectorEnvelope({ ...validEnvelope(), occurredAt: "2026-02-30T18:00:00Z" })).toBe(false);
+    expect(isConnectorEnvelope({ ...validEnvelope(), occurredAt: "2024-02-29T18:00:00.1Z" })).toBe(true);
   });
 
   test("accepts only an exact bounded version-one envelope", () => {
